@@ -3,6 +3,16 @@ const jsdom = require("jsdom");
 const { link } = require('node:fs');
 const { JSDOM } = jsdom;
 
+const isValidUrl = urlString => {
+    try {
+        return Boolean(new URL(urlString));
+    }
+    catch(e){
+        //console.log('caught invalid URL')
+        return false
+    }
+}
+
 //takes URLs and returns URL in a normalized format (to check if pages are the same)
 function normalizeURL(url){
     let myURL = new URL(url)
@@ -24,23 +34,14 @@ async function getURLsFromHTML(htmlBody, baseURL){
         url: baseURL
     })
     aTags = jsdom.window.document.querySelectorAll("a")
+
     let listOfUrls = []
 
-    for(let i=0; i<aTags.length; i++)
+    for(i of aTags)
     {
-        listOfUrls.push(aTags[i].origin + aTags[i].pathname)
+        listOfUrls.push(i.origin + i.pathname)
     }
 
-    const isValidUrl = urlString => {
-        try {
-            return Boolean(new URL(urlString));
-        }
-        catch(e){
-            //console.log('caught invalid URL')
-            return false
-        }
-    }
-    
     listOfUrls = listOfUrls.filter((x) => isValidUrl(x));
     
     return listOfUrls
@@ -82,10 +83,11 @@ async function crawlPage(baseURL, currentURL, pages = {}){
 
     for(const link of fetchedLinks){
         normLink = normalizeURL(link)
+        
         await crawlPage(baseURL, normLink, pages)
-        if(pages[normLink]){
+        if(pages[normLink] && (normLink.hostname == base.hostname)){
             pages[normLink]++
-        }else{
+        }else if(normLink.hostname == base.hostname){
             pages[normLink] = 1
         }
     }
