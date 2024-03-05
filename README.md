@@ -1,9 +1,13 @@
-Crawl for internal links
+# Crawl for internal links
 
 usage: $ npm start *url*
 
-dependencies: 
-    JSDOM:
-        $ npm install jsdom
-    Node.js 18.7.0
-        $ nvm use
+# Dependencies
+
+JSDOM:
+    $ npm install jsdom
+
+Node.js 18.7.0
+- .nvmrc sets nvm to use node 18
+    $ nvm use
+
