@@ -1,5 +1,6 @@
 const url = require('node:url');
 const jsdom = require("jsdom");
+const { link } = require('node:fs');
 const { JSDOM } = jsdom;
 
 //takes URLs and returns URL in a normalized format (to check if pages are the same)
@@ -24,10 +25,14 @@ async function getURLsFromHTML(htmlBody, baseURL){
     })
     aTags = jsdom.window.document.querySelectorAll("a")
     let listOfUrls = []
+
     for(let i=0; i<aTags.length; i++)
     {
         listOfUrls.push(aTags[i].origin + aTags[i].pathname)
     }
+    
+    listOfUrls = listOfUrls.filter((x) => x.length > 0);
+
     return listOfUrls
 }
 
@@ -38,7 +43,7 @@ async function crawlPage(baseURL, currentURL, pages = {}){
     const base = new URL(baseURL)
     const current = new URL(currentURL)
     if(!(base.hostname == current.hostname)){
-        console.log(`${current.hostname} not the same domain`)
+        //console.log(`${current.hostname} not the same domain`)
         return pages
     }
     const currentNorm = normalizeURL(currentURL)
@@ -51,15 +56,15 @@ async function crawlPage(baseURL, currentURL, pages = {}){
 
     const response = await fetch(currentNorm)
 
-    if(response.status >= 400 & response.status < 500){
-        console.log("html error response 400-499")
-        return
+    if(response.status >= 400){
+        //console.log(`${current.hostname} - HTML error'`)
+        return pages
     }
 
     myHeaders = response.headers
     if(!(myHeaders.get('content-type').includes('text/html'))){
-        console.log('content-type is not text/html')
-        return
+        //console.log(`${current.hostname} - content type not text/html`)
+        return pages
     }
 
     console.log(`making request to ${currentNorm}`)
@@ -74,10 +79,8 @@ async function crawlPage(baseURL, currentURL, pages = {}){
             pages[normLink] = 1
         }
     }
-
     return pages
 }
-
 
 module.exports = {
     normalizeURL,
