@@ -12,7 +12,7 @@ JSDOM:
 
 Node.js 18.7.0
 
-- .nvmrc sets nvm to use node 18
+.nvmrc sets nvm to use node 18
 
     $ nvm use
 
