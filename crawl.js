@@ -30,9 +30,19 @@ async function getURLsFromHTML(htmlBody, baseURL){
     {
         listOfUrls.push(aTags[i].origin + aTags[i].pathname)
     }
-    
-    listOfUrls = listOfUrls.filter((x) => x.length > 0);
 
+    const isValidUrl = urlString => {
+        try {
+            return Boolean(new URL(urlString));
+        }
+        catch(e){
+            //console.log('caught invalid URL')
+            return false
+        }
+    }
+    
+    listOfUrls = listOfUrls.filter((x) => isValidUrl(x));
+    
     return listOfUrls
 }
 
@@ -58,13 +68,13 @@ async function crawlPage(baseURL, currentURL, pages = {}){
 
     if(response.status >= 400){
         //console.log(`${current.hostname} - HTML error'`)
-        return pages
+        return
     }
 
     myHeaders = response.headers
     if(!(myHeaders.get('content-type').includes('text/html'))){
         //console.log(`${current.hostname} - content type not text/html`)
-        return pages
+        return
     }
 
     console.log(`making request to ${currentNorm}`)
@@ -72,7 +82,7 @@ async function crawlPage(baseURL, currentURL, pages = {}){
 
     for(const link of fetchedLinks){
         normLink = normalizeURL(link)
-        crawlPage(baseURL, normLink, pages)
+        await crawlPage(baseURL, normLink, pages)
         if(pages[normLink]){
             pages[normLink]++
         }else{
