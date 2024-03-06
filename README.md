@@ -1,8 +1,9 @@
 # Crawl for internal links
 
-usage: 
+usage:
 
-    $ npm start *url*
+    $ npm start https://example.com
+
 
 # Dependencies
 
@@ -15,4 +16,3 @@ Node.js 18.7.0
 with nvm:
 
     $ nvm use
-
