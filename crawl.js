@@ -54,7 +54,7 @@ async function crawlPage(baseURL, currentURL, pages = {}){
     const base = new URL(baseURL)
     const current = new URL(currentURL)
     if(!(base.hostname == current.hostname)){
-        //console.log(`${current.hostname} not the same domain`)
+        console.log(`${current.hostname} not the same domain`)
         return pages
     }
     const currentNorm = normalizeURL(currentURL)
@@ -68,13 +68,13 @@ async function crawlPage(baseURL, currentURL, pages = {}){
     const response = await fetch(currentNorm)
 
     if(response.status >= 400){
-        //console.log(`${current.hostname} - HTML error'`)
+        console.log(`${current.hostname} - HTML error'`)
         return
     }
 
     myHeaders = response.headers
     if(!(myHeaders.get('content-type').includes('text/html'))){
-        //console.log(`${current.hostname} - content type not text/html`)
+        console.log(`${current.hostname} - content type not text/html`)
         return
     }
 
